@@ -1,0 +1,20 @@
+{
+  "name": "ai-testing-research",
+  "version": "1.0.0",
+  "description": "AI integrated testing research",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "dashboard": "node runComparison.js",
+    "test:standard": "jest tests/standard",
+    "test:unified": "jest tests/unified",
+    "test:full": "jest tests/unified/unifiedFull.test.js",
+    "test:all": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
