@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Таблиця порівняння</title>
+  <style>
+    body { margin: 0; padding: 24px; font-family: Arial, sans-serif; background: #f4f7fb; color: #1f2937; }
+    h1 { margin: 0 0 18px; font-size: 1.5rem; }
+    .table-wrapper { background: #ffffff; border-radius: 16px; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08); padding: 20px; max-width: 760px; margin: 0 auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+    th { background: #f9fafb; font-weight: 700; color: #111827; }
+    tbody tr.highlight { background: #ecfdf5; }
+    .footer { margin-top: 14px; font-size: 0.85rem; color: #6b7280; text-align: right; }
+    .empty-state { text-align: center; padding: 48px 20px; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="table-wrapper">
+    <h1>Таблиця порівняння</h1>
+    <div id="dashboard-root"></div>
+  </div>
+  <script src="data.js"></script>
+  <script>
+    function createComparisonTable(data) {
+      const table = document.createElement('table');
+      const standardHighlight = data.comparison.standard.bugsFound > data.comparison.unified.bugsFound && data.comparison.standard.passed < data.comparison.unified.passed && data.comparison.standard.avgTime < data.comparison.unified.avgTime;
+      const unifiedHighlight = data.comparison.unified.bugsFound > data.comparison.standard.bugsFound && data.comparison.unified.passed < data.comparison.standard.passed && data.comparison.unified.avgTime < data.comparison.standard.avgTime;
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Метод</th>
+            <th>Passed</th>
+            <th>Failed</th>
+            <th>Bugs</th>
+            <th>Успішність</th>
+            <th>Час</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="${standardHighlight ? 'highlight' : ''}">
+            <td>Стандартний</td>
+            <td>${data.comparison.standard.passed}</td>
+            <td>${data.comparison.standard.failed}</td>
+            <td>${data.comparison.standard.bugsFound}</td>
+            <td>${data.comparison.standard.successRate.toFixed(2)}%</td>
+            <td>${data.comparison.standard.avgTime.toFixed(2)}</td>
+          </tr>
+          <tr class="${unifiedHighlight ? 'highlight' : ''}">
+            <td>Уніфікований</td>
+            <td>${data.comparison.unified.passed}</td>
+            <td>${data.comparison.unified.failed}</td>
+            <td>${data.comparison.unified.bugsFound}</td>
+            <td>${data.comparison.unified.successRate.toFixed(2)}%</td>
+            <td>${data.comparison.unified.avgTime.toFixed(2)}</td>
+          </tr>
+        </tbody>
+      `;
+      return table;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const root = document.getElementById('dashboard-root');
+      if (window.dashboardData) {
+        root.appendChild(createComparisonTable(window.dashboardData));
+      } else {
+        root.innerHTML = '<div class="empty-state">Запустіть <strong>npm run dashboard</strong>, щоб згенерувати дані.</div>';
+      }
+    });
+    console.log('Dashboard Data:', window.dashboardData);
+  </script>
+</body>
+</html>
